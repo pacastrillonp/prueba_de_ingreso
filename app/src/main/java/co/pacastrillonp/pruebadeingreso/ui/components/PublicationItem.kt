@@ -41,6 +41,9 @@ fun PublicationItemPreview() {
     PruebaDeIngresoTheme {
         PublicationItem(
             UserPublicationsPresentable(
+                "PabloCastrillon",
+                "3017209503",
+                "pactres@gmail.com",
                 "Al seleccionar el botón “Ver publicaciones” se debe mostrar el nombre, email, teléfono y publicaciones"
             )
         )

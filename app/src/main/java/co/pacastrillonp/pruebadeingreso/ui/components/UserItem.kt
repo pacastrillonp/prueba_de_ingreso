@@ -11,11 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import co.pacastrillonp.pruebadeingreso.model.User
+import co.pacastrillonp.pruebadeingreso.model.UserPresentable
 import co.pacastrillonp.pruebadeingreso.ui.theme.PruebaDeIngresoTheme
 
 @Composable
-fun UserItem(user: User, onClick: (Int) -> Unit) {
+fun UserItem(userPresentable: UserPresentable, onClick: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp, 4.dp)
@@ -31,7 +31,7 @@ fun UserItem(user: User, onClick: (Int) -> Unit) {
                     .fillMaxSize()
             )
             {
-                Text(text = user.name)
+                Text(text = userPresentable.name)
                 Row(
                     modifier = Modifier
                         .weight(0.8f)
@@ -39,7 +39,7 @@ fun UserItem(user: User, onClick: (Int) -> Unit) {
                 )
                 {
                     Icon(Icons.Rounded.Email, contentDescription = "")
-                    Text(text = user.emailAddress)
+                    Text(text = userPresentable.emailAddress)
                 }
                 Row(
                     modifier = Modifier
@@ -47,7 +47,7 @@ fun UserItem(user: User, onClick: (Int) -> Unit) {
                         .fillMaxWidth()
                 ) {
                     Icon(Icons.Rounded.Phone, contentDescription = "")
-                    Text(text = user.telephoneNumber)
+                    Text(text = userPresentable.telephoneNumber)
                 }
                 Row(
                     modifier = Modifier
@@ -55,7 +55,7 @@ fun UserItem(user: User, onClick: (Int) -> Unit) {
                         .fillMaxWidth()
                 ) {
                     Spacer(modifier = Modifier.weight(0.9f))
-                    Button(onClick = { onClick(user.id) }, shape = RectangleShape) {
+                    Button(onClick = { onClick(userPresentable.id) }, shape = RectangleShape) {
                         Text(text = "Get Information")
                     }
                 }
@@ -68,6 +68,6 @@ fun UserItem(user: User, onClick: (Int) -> Unit) {
 @Composable
 fun DefaultPreview() {
     PruebaDeIngresoTheme {
-        UserItem(User(1, "Pablo Castrillón", "3017209503", "pactres@gmail.com")) { }
+        UserItem(UserPresentable(1, "Pablo Castrillón", "3017209503", "pactres@gmail.com")) { }
     }
 }

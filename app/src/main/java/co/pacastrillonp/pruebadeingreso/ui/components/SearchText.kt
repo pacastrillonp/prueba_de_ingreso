@@ -28,7 +28,7 @@ fun SearchText(state: MutableState<TextFieldValue>) {
                 color = Color.Black
             )
             .padding(8.dp, 4.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     ) {
         BasicTextField(
             value = state.value,

@@ -1,32 +1,52 @@
 package co.pacastrillonp.pruebadeingreso.ui.users
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import co.pacastrillonp.pruebadeingreso.model.User
+import androidx.lifecycle.viewModelScope
 import co.pacastrillonp.pruebadeingreso.model.UserPublicationsPresentable
+import co.pacastrillonp.pruebadeingreso.persistence.mappers.postResponseToUserPublicationsMapper
+import co.pacastrillonp.pruebadeingreso.repository.NetworkRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class UserPublicationsViewModel : ViewModel() {
-    val fetchingData = false
+class UserPublicationsViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
 
-    val user = User(
-        1,
-        "Pablo Castrillón",
-        "3017209503",
-        "pactres@gmail.com",
-    )
+    private val _fetchingData: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
-    val publications = listOf<UserPublicationsPresentable>(
-        UserPublicationsPresentable(
-            "Al seleccionar el botón “Ver publicaciones” se debe mostrar el nombre, email, teléfono y publicaciones"
-        ),
-        UserPublicationsPresentable(
-            "Al seleccionar el botón “Ver publicaciones” se debe mostrar el nombre, email, teléfono y publicaciones"
-        ),
+    val fetchingData: LiveData<Boolean> get() = _fetchingData
 
-        UserPublicationsPresentable(
-            "Al seleccionar el botón “Ver publicaciones” se debe mostrar el nombre, email, teléfono y publicaciones"
-        ),
-        UserPublicationsPresentable(
-            "Al seleccionar el botón “Ver publicaciones” se debe mostrar el nombre, email, teléfono y publicaciones"
-        )
-    )
+    private val _publications: MutableLiveData<List<UserPublicationsPresentable>> by lazy {
+        MutableLiveData<List<UserPublicationsPresentable>>(listOf())
+    }
+
+    val publications: LiveData<List<UserPublicationsPresentable>> get() = _publications
+
+    fun fetchUserPublications(
+        userId: Int,
+        name: String,
+        telephoneNumber: String,
+        emailAddress: String
+    ) {
+
+        _fetchingData.postValue(true)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = networkRepository.getPostById(userId)
+            if (result.isSuccessful) {
+                _fetchingData.postValue(false)
+                result.body()?.let {
+                    _publications.postValue(
+                        it.map { postResponse ->
+                            postResponse.postResponseToUserPublicationsMapper(
+                                name,
+                                telephoneNumber,
+                                emailAddress
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
