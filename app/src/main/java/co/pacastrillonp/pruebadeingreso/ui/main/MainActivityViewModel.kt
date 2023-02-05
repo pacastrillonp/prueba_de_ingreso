@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.pacastrillonp.pruebadeingreso.model.UserPresentable
-import co.pacastrillonp.pruebadeingreso.model.mapper.userEntityToUserPresentable
+import co.pacastrillonp.pruebadeingreso.model.mapper.userEntityToUserPresentableMapper
 import co.pacastrillonp.pruebadeingreso.model.persistence.UserEntity
 import co.pacastrillonp.pruebadeingreso.persistence.dao.UserDao
 import co.pacastrillonp.pruebadeingreso.persistence.mappers.userResponseToUserEntityMapper
@@ -22,7 +22,7 @@ class MainActivityViewModel(
 
     val users: LiveData<List<UserEntity>> by lazy { userDao.getAllUsers() }
 
-    private val _fetchingData: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
+     val _fetchingData: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     val fetchingData: LiveData<Boolean> get() = _fetchingData
 
@@ -33,12 +33,12 @@ class MainActivityViewModel(
     val userPresentable: LiveData<List<UserPresentable>> get() = _userPresentable
 
     fun updateUserPresentable(userEntity: List<UserEntity>) {
-        localUserPresentable = userEntity.map { it.userEntityToUserPresentable() }
+        localUserPresentable = userEntity.map { it.userEntityToUserPresentableMapper() }
         _userPresentable.postValue(localUserPresentable)
     }
 
     fun fetchUserData() {
-        if (_fetchingData.value == false) {
+       if (_fetchingData.value == false) {
             viewModelScope.launch(Dispatchers.IO) {
                 _fetchingData.postValue(true)
                 val result = networkRepository.fetchUsers()
