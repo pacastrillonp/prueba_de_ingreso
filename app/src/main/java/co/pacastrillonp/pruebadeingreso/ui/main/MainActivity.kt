@@ -24,11 +24,17 @@ import co.pacastrillonp.pruebadeingreso.ui.components.SearchText
 import co.pacastrillonp.pruebadeingreso.ui.components.UserItem
 import co.pacastrillonp.pruebadeingreso.ui.theme.PruebaDeIngresoTheme
 import co.pacastrillonp.pruebadeingreso.ui.users.UsersPublicationsActivity
+import co.pacastrillonp.pruebadeingreso.util.subscribeOnComputationThread
+import co.pacastrillonp.pruebadeingreso.util.subscribeOnMainThread
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModel<MainActivityViewModel>()
+
+    private val disposable = CompositeDisposable()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,8 +47,7 @@ class MainActivity : ComponentActivity() {
             PruebaDeIngresoTheme {
 
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
                 ) {
                     Column(
                         modifier = Modifier
@@ -63,11 +68,9 @@ class MainActivity : ComponentActivity() {
                                 Spacer(modifier = Modifier.padding(bottom = 10.dp))
                                 viewModel.searchedItems(searchByUserName.value.text)
                                 LazyColumn(contentPadding = PaddingValues(bottom = 150.dp)) {
-
                                     itemsIndexed(
                                         items = users.value
                                     ) { _, user ->
-
                                         UserItem(userPresentable = user, onClick = {
                                             val intent = Intent(
                                                 this@MainActivity,
@@ -89,21 +92,25 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        viewModel.users.observe(this) {
-            if (it.isEmpty()) {
-                viewModel.fetchUserData()
-            } else {
-                viewModel.updateUserPresentable(it)
+        viewModel.fetchUsers
+            .subscribeOnComputationThread()
+            .subscribeOnMainThread(disposable) {
+                if (it.isEmpty()) {
+                    viewModel.fetchData()
+                } else {
+                    viewModel.updateUserPresentable(it)
+                }
             }
-        }
-
     }
 
+    override fun onDestroy() {
+        disposable.clear()
+        super.onDestroy()
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    PruebaDeIngresoTheme {
-    }
+    PruebaDeIngresoTheme {}
 }

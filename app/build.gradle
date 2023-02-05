@@ -57,6 +57,7 @@ dependencies {
     implementation "androidx.compose.material:material:$materialComposeVersion"
     implementation "androidx.compose.animation:animation-graphics:$compose_ui_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
+    implementation "androidx.compose.runtime:runtime-rxjava3:$compose_ui_version"
 
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$junitExtVersion"
@@ -65,6 +66,7 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
+    testImplementation "androidx.arch.core:core-testing:$AndroidTestingVersion"
 
     // Koin
     implementation "io.insert-koin:koin-android:$koin_android_version"
@@ -76,14 +78,27 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
     implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
     implementation "com.squareup.retrofit2:converter-gson:$gsonVersion"
-
+    implementation "com.squareup.retrofit2:adapter-rxjava3:$retrofitVersion"
 
     // Room
     implementation "androidx.room:room-ktx:$roomVersion"
     annotationProcessor "androidx.room:room-compiler:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     testImplementation("androidx.room:room-testing:$roomVersion")
+    implementation "androidx.room:room-rxjava3:$roomVersion"
 
+    //RxJAva
+    implementation "io.reactivex.rxjava3:rxkotlin:$RxKotlinVersion"
+    implementation "io.reactivex.rxjava3:rxandroid:$RxAndroidVersion"
+    implementation "io.reactivex.rxjava3:rxjava:$RxJavaVersion"
+
+    // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$courutinesVersion"
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$courutinesVersion") {
+        exclude group: "org.jetbrains.kotlinx", module: "kotlinx-coroutines-debug"
+    }
+
+    //Mockito
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
 
 }

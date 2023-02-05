@@ -1,6 +1,5 @@
 package co.pacastrillonp.pruebadeingreso.ui.users
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,15 +11,11 @@ import kotlinx.coroutines.launch
 
 class UserPublicationsViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
 
-    private val _fetchingData: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
+    val fetchingData: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
-    val fetchingData: LiveData<Boolean> get() = _fetchingData
-
-    private val _publications: MutableLiveData<List<UserPublicationsPresentable>> by lazy {
+    val publications: MutableLiveData<List<UserPublicationsPresentable>> by lazy {
         MutableLiveData<List<UserPublicationsPresentable>>(listOf())
     }
-
-    val publications: LiveData<List<UserPublicationsPresentable>> get() = _publications
 
     fun fetchUserPublications(
         userId: Int,
@@ -29,14 +24,14 @@ class UserPublicationsViewModel(private val networkRepository: NetworkRepository
         emailAddress: String
     ) {
 
-        _fetchingData.postValue(true)
+        fetchingData.postValue(true)
 
         viewModelScope.launch(Dispatchers.IO) {
             val result = networkRepository.getPostById(userId)
             if (result.isSuccessful) {
-                _fetchingData.postValue(false)
+                fetchingData.postValue(false)
                 result.body()?.let {
-                    _publications.postValue(
+                    publications.postValue(
                         it.map { postResponse ->
                             postResponse.postResponseToUserPublicationsMapper(
                                 name,

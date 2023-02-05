@@ -5,6 +5,7 @@ import org.koin.dsl.module
 import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 val networkModule = module {
@@ -13,6 +14,7 @@ val networkModule = module {
         Retrofit.Builder()
             .baseUrl(Constants.Api.BASE_URL)
             .addConverterFactory(get<Converter.Factory>())
+            .addCallAdapterFactory(get<CallAdapter.Factory>())
             .build()
     }
 
@@ -20,4 +22,5 @@ val networkModule = module {
 
     single<ApiProvider> { get<Retrofit>().create(ApiProvider::class.java) }
 
+    single<CallAdapter.Factory> { RxJava3CallAdapterFactory.create() }
 }

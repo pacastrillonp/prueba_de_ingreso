@@ -20,6 +20,11 @@ buildscript {
         junitVersion = '4.13.2'
         espressoVersion = '3.5.1'
         gsonVersion = '2.9.0'
+        mockitoKotlinVersion = '2.2.0'
+        RxJavaVersion = '3.1.5'
+        RxKotlinVersion = '3.0.1'
+        RxAndroidVersion = '3.0.2'
+        AndroidTestingVersion = '2.1.0'
     }
 }
 
