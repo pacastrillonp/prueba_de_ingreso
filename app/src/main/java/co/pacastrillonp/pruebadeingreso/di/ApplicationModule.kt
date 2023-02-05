@@ -1,6 +1,6 @@
 package co.pacastrillonp.pruebadeingreso.di
 
-import co.pacastrillonp.pruebadeingreso.mainModule
+import co.pacastrillonp.pruebadeingreso.ui.main.mainModule
 import co.pacastrillonp.pruebadeingreso.network.networkModule
 import co.pacastrillonp.pruebadeingreso.persistence.persistenceModule
 import co.pacastrillonp.pruebadeingreso.repository.repositoryModule

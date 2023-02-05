@@ -1,4 +1,4 @@
-package co.pacastrillonp.pruebadeingreso
+package co.pacastrillonp.pruebadeingreso.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,15 +7,20 @@ import androidx.lifecycle.viewModelScope
 import co.pacastrillonp.pruebadeingreso.model.UserPresentable
 import co.pacastrillonp.pruebadeingreso.model.mapper.userEntityToUserPresentable
 import co.pacastrillonp.pruebadeingreso.model.persistence.UserEntity
+import co.pacastrillonp.pruebadeingreso.persistence.dao.UserDao
+import co.pacastrillonp.pruebadeingreso.persistence.mappers.userResponseToUserEntityMapper
 import co.pacastrillonp.pruebadeingreso.repository.NetworkRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivityViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
+class MainActivityViewModel(
+    private val networkRepository: NetworkRepository,
+    private val userDao: UserDao
+) : ViewModel() {
 
     var localUserPresentable = emptyList<UserPresentable>()
 
-    val users: LiveData<List<UserEntity>> by lazy { networkRepository.getUsers() }
+    val users: LiveData<List<UserEntity>> by lazy { userDao.getAllUsers() }
 
     private val _fetchingData: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
@@ -36,8 +41,15 @@ class MainActivityViewModel(private val networkRepository: NetworkRepository) : 
         if (_fetchingData.value == false) {
             viewModelScope.launch(Dispatchers.IO) {
                 _fetchingData.postValue(true)
-                networkRepository.fetchUsers()
-                _fetchingData.postValue(false)
+                val result = networkRepository.fetchUsers()
+                if (result.isSuccessful) {
+                    result.body()?.let {
+                        it.map { userResponse ->
+                            userDao.insert(userResponse.userResponseToUserEntityMapper())
+                        }
+                    }
+                    _fetchingData.postValue(false)
+                }
             }
         }
     }
